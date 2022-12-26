@@ -1,16 +1,6 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.16)
 
-project(CXX_PROJECT)
+set(target_name shared_mem_class)
 
-### C++
-enable_language(CXX)
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard required for build")
-set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "is C++ stndard a requirement")
-set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "enable/disable compiler specific extensions")
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -W -Wall -Wextra -Werror -std=c++11")
-
-set(SRC_DIR src)
-
-add_subdirectory(src)
-add_subdirectory(test)
+add_library(${target_name} shmem.cpp)
+target_include_directories (${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
