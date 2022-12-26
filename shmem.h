@@ -15,7 +15,7 @@
 #ifndef __SHMEM_H
 #define __SHMEM_H
 
-
+template <class T>
 class shmem {
 
 public:
@@ -24,15 +24,18 @@ public:
     ~shmem();
 
     int init(void);
-    char* get_pointer(void);
     uint16_t get_max_size(void);
+
+    int write(T&data);
+    T& read(void) const;
+
 
 private:
 
     std::string _path;
     key_t key;
     int shmid;
-    char *data;
+    T data;
     int mode;
 
     static constexpr uint16_t shm_size = 1000;

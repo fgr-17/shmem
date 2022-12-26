@@ -1,5 +1,5 @@
 /**
- * @file shmem.cpp
+ * @file shmem<T>.cpp
  * @author Federico Roux (rouxfederico@gmail.com)
  * @brief C++ wrapper for shared memory usage on linux
  * @version 0.1
@@ -13,12 +13,12 @@
 #include <shmem.h>
 
 /**
- * @brief Destroy the shmem::shmem object
+ * @brief Destroy the shmem<T>::shmem object
  * 
  */
-shmem::~shmem() {
+template <class T> shmem<T>::~shmem() {
     /* detach from the segment: */
-    if (shmdt(data) == -1) {
+    if (shmdt(static_cast<void*>(data)) == -1) {
         perror("shmdt");
     }
 }
@@ -28,7 +28,7 @@ shmem::~shmem() {
  * 
  * @return int 
  */
-int shmem::init(void) {
+template <class T> int shmem<T>::init(void) {
 
     /* make the key: */
     if ((key = ftok(_path.c_str(), 'R')) == -1) {
@@ -43,8 +43,8 @@ int shmem::init(void) {
     }
 
     /* attach to the segment to get a pointer to it: */
-    data = (char*) shmat(shmid, (void *)0, 0);
-    if (data == (char *)(-1)) {
+    data = static_cast<T>(shmat(shmid, (void *)0, 0));
+    if (data == nullptr) {
         perror("shmat");
         return(1);
     }
@@ -52,13 +52,22 @@ int shmem::init(void) {
     return 0;
 }
 
-
 /**
- * @brief returns shared memory's data pointer
+ * @brief  write data to shared mem
  * 
  * @return char* 
  */
-char* shmem::get_pointer(void) {
+template<class T> int shmem<T>::write(T&data) {
+    this->data = data;
+    return data;
+}
+
+/**
+ * @brief read data from shared memory
+ * 
+ * @return char* 
+ */
+template<class T> T& shmem<T>::read(void) const{
     return data;
 }
 
@@ -67,6 +76,6 @@ char* shmem::get_pointer(void) {
  * 
  * @return uint16_t 
  */
-uint16_t shmem::get_max_size(void) {
+template <class T> uint16_t shmem<T>::get_max_size(void) {
     return shm_size;
 }
