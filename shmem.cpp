@@ -1,5 +1,5 @@
 /**
- * @file shmem<T>.cpp
+ * @file shmem.cpp
  * @author Federico Roux (rouxfederico@gmail.com)
  * @brief C++ wrapper for shared memory usage on linux
  * @version 0.1
@@ -57,7 +57,7 @@ template <class T> int shmem<T>::init(void) {
  * 
  * @return char* 
  */
-template<class T> int shmem<T>::write(T&data) {
+template<class T> int shmem<T>::write(T data) {
     this->data = data;
     return data;
 }

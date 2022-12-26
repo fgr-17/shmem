@@ -15,7 +15,7 @@
 #ifndef __SHMEM_H
 #define __SHMEM_H
 
-template <class T>
+template <typename T>
 class shmem {
 
 public:
@@ -26,7 +26,7 @@ public:
     int init(void);
     uint16_t get_max_size(void);
 
-    int write(T&data);
+    int write(T data);
     T& read(void) const;
 
 
