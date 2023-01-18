@@ -20,7 +20,7 @@ class shmem {
 
 public:
 
-    shmem(std::string path): _path(path) {}
+    shmem(std::string path): _path(path), data(nullptr) {}
 
     /**
      * @brief Destroy the shmem<T>::shmem object
@@ -38,6 +38,8 @@ public:
      * @return int 
      */
     int init(void) {
+
+        void* ptr;
          /* make the key: */
         if ((key = ftok(_path.c_str(), 'R')) == -1) {
             perror("ftok");
@@ -51,11 +53,13 @@ public:
         }
 
         /* attach to the segment to get a pointer to it: */
-        data = static_cast<T>(shmat(shmid, (void *)0, 0));
-        if (data == nullptr) {
+        ptr = shmat(shmid, (void *)0, 0);
+        if (ptr == nullptr) {
             perror("shmat");
             return(1);
         }
+
+        data = static_cast<T*> (ptr);
 
         return 0;
     }
@@ -66,8 +70,8 @@ public:
      * @return char* 
      */
     int write(T data) {
-        this->data = data;
-        return data;
+        *(this->data) = data;
+        return 0;
     }
 
     /**
@@ -76,7 +80,7 @@ public:
      * @return T* 
      */
     T read(void) const {
-        return data;
+        return *data;
     }
 
     /**
@@ -95,7 +99,7 @@ private:
     std::string _path;
     key_t key;
     int shmid;
-    T data;
+    T*data;
     int mode;
 
     static constexpr uint16_t shm_size = 1000;
