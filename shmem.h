@@ -15,6 +15,9 @@
 #ifndef __SHMEM_H
 #define __SHMEM_H
 
+#define SHMAT_RET_ERROR ((void*) (-1))
+
+
 template <class T>
 class shmem {
 
@@ -40,6 +43,7 @@ public:
     int init(void) {
 
         void* ptr;
+
          /* make the key: */
         if ((key = ftok(_path.c_str(), 'R')) == -1) {
             perror("ftok");
@@ -54,13 +58,12 @@ public:
 
         /* attach to the segment to get a pointer to it: */
         ptr = shmat(shmid, (void *)0, 0);
-        if (ptr == nullptr) {
+        if (ptr == SHMAT_RET_ERROR) {
             perror("shmat");
             return(1);
         }
 
         data = static_cast<T*> (ptr);
-
         return 0;
     }
 
